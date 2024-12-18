@@ -1,0 +1,39 @@
+mport numpy as np
+import sympy
+from sympy import *
+def QR(matrix):
+    print('starting qr')
+
+    n, m = matrix.shape
+
+    Q = np.eye(n)
+    R = matrix.copy()
+
+    for i in range(n):
+        a_k = R[i:n, i]
+
+        norm_a_k = np.linalg.norm(a_k)
+
+        if a_k[0] > 0:
+            v = a_k + norm_a_k * np.eye(len(a_k), 1)[:, 0]
+        else:
+            v = a_k + norm_a_k * np.eye(len(a_k), 1)[:, 0]
+        
+        v /= np.linalg.norm(v)
+
+        H_k = np.eye(n)
+
+        # Apply the Householder transformation to R in place
+        R[i:n, i:] -= 2 * np.outer(v, v @ R[i:n, i:])
+
+        # Update Q with the transpose of the Householder reflection in place
+        Q[:, i:n] -= 2 * np.outer(Q[:, i:n] @ v, v)
+
+    return Q, R
+
+size = 30
+
+
+matrix = np.random.rand(size, size)
+matrix = (matrix + matrix.T)/2
+Q, R = QR(matrix)
